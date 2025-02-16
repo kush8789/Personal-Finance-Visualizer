@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env.local
+.env*.local
+
+# Build output
+.next/
+out/
+dist/
+
+# Logs
+*.log
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+
+# macOS specific files
+.DS_Store
+
+# Debug files
+*.pdb
+*.idb
+*.ilk
+
+# Local development files
+*.swp
+*.swo
+
+# Testing files
+coverage/
+
+# Production files
+*.env.production

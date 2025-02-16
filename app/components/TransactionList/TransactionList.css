@@ -1,0 +1,72 @@
+/* TransactionList.css */
+
+.transaction-list-container {
+  overflow-x: auto;
+}
+
+.transaction-table {
+  min-width: 100%;
+  background-color: white;
+  border-collapse: collapse;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.transaction-table th {
+  background-color: #f7fafc;
+  font-weight: 600;
+}
+
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-modal-content {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.edit-modal-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.edit-modal-content label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.edit-modal-content input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.edit-modal-actions button {
+  margin-left: 0.5rem;
+}
