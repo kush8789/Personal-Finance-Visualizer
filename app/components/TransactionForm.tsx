@@ -1,33 +1,64 @@
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function TransactionForm() {
+  // State to manage form data
   const [formData, setFormData] = useState({ amount: "", date: "", description: "" });
+  // State to manage error messages
   const [error, setError] = useState("");
 
+  // Function to validate the form
   const validateForm = () => {
-    if (!formData.amount || !formData.date || !formData.description) return "All fields are required!";
-    if (parseFloat(formData.amount) <= 0) return "Amount must be positive!";
-    if (new Date(formData.date) > new Date()) return "Date cannot be in the future!";
+    if (!formData.amount || !formData.date || !formData.description) {
+      return "All fields are required!";
+    }
+    if (parseFloat(formData.amount) <= 0) {
+      return "Amount must be positive!";
+    }
+    if (new Date(formData.date) > new Date()) {
+      return "Date cannot be in the future!";
+    }
     return "";
   };
 
+  // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate the form
     const errorMsg = validateForm();
-    if (errorMsg) return setError(errorMsg);
+    if (errorMsg) {
+      setError(errorMsg);
+      return;
+    }
 
-    const response = await fetch("/api/transactions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    try {
+      // Send the form data to the API
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: parseFloat(formData.amount), // Ensure amount is a number
+          date: formData.date,
+          description: formData.description,
+        }),
+      });
 
-    if (response.ok) setFormData({ amount: "", date: "", description: "" });
-    else setError("Failed to add transaction");
+      if (!response.ok) {
+        throw new Error("Failed to add transaction");
+      }
+
+      // Clear the form and error message on success
+      setFormData({ amount: "", date: "", description: "" });
+      setError("");
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+      setError("Failed to add transaction");
+    }
   };
 
   return (

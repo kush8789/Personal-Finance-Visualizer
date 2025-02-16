@@ -26,10 +26,14 @@ export default function TransactionList() {
   const fetchTransactions = async () => {
     try {
       const response = await fetch('/api/transactions');
+      if (!response.ok) {
+        throw new Error('Failed to fetch transactions');
+      }
       const data = await response.json();
       setTransactions(data); // Update the transactions state with the fetched data
     } catch (error) {
       setError('Failed to fetch transactions');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -42,14 +46,20 @@ export default function TransactionList() {
 
   // Function to handle deletion of a transaction
   const handleDelete = async (id: string) => {
-    const response = await fetch('/api/transactions', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }), // Send the transaction ID to delete
-    });
-    if (response.ok) {
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }), // Send the transaction ID to delete
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete transaction');
+      }
       // Remove the deleted transaction from the list
       setTransactions(transactions.filter((t) => t._id !== id));
+    } catch (error) {
+      console.error('Failed to delete transaction:', error);
+      setError('Failed to delete transaction');
     }
   };
 
@@ -60,23 +70,26 @@ export default function TransactionList() {
 
   // Function to save the updated transaction
   const handleSave = async (updatedTransaction: Transaction) => {
-    const response = await fetch('/api/transactions', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: updatedTransaction._id, // Include the transaction ID
-        amount: updatedTransaction.amount,
-        date: updatedTransaction.date,
-        description: updatedTransaction.description,
-      }),
-    });
-
-    if (response.ok) {
+    try {
+      const response = await fetch('/api/transactions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: updatedTransaction._id, // Include the transaction ID
+          amount: updatedTransaction.amount,
+          date: updatedTransaction.date,
+          description: updatedTransaction.description,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update transaction');
+      }
       // Refresh the transaction list after successful update
       fetchTransactions();
       setEditingTransaction(null); // Close the edit modal
-    } else {
-      console.error('Failed to update transaction');
+    } catch (error) {
+      console.error('Failed to update transaction:', error);
+      setError('Failed to update transaction');
     }
   };
 
@@ -131,7 +144,9 @@ export default function TransactionList() {
                 <input
                   type="date"
                   value={editingTransaction.date}
-                  onChange={(e) => setEditingTransaction({...editingTransaction, date: e.target.value,})}
+                  onChange={(e) =>
+                    setEditingTransaction({ ...editingTransaction, date: e.target.value })
+                  }
                 />
               </div>
               <div className="mb-4">
@@ -140,7 +155,8 @@ export default function TransactionList() {
                   type="text"
                   value={editingTransaction.description}
                   onChange={(e) =>
-                    setEditingTransaction({...editingTransaction,description: e.target.value,})}
+                    setEditingTransaction({ ...editingTransaction, description: e.target.value })
+                  }
                 />
               </div>
               <div className="mb-4">
@@ -148,7 +164,12 @@ export default function TransactionList() {
                 <input
                   type="number"
                   value={editingTransaction.amount}
-                  onChange={(e) => setEditingTransaction({...editingTransaction,amount: parseFloat(e.target.value),})}
+                  onChange={(e) =>
+                    setEditingTransaction({
+                      ...editingTransaction,
+                      amount: parseFloat(e.target.value),
+                    })
+                  }
                 />
               </div>
               <div className="edit-modal-actions">
